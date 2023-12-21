@@ -1,15 +1,10 @@
 import { Router } from "express";
 const router = Router();
 
-import createRouter from "./create"
-import searchRouter from "./search"
+import createRouter from "./create.js"
+import queryRouter from "./query.js"
 
-/**
- * TODO: Create endpoints for 
- * 1. Youtube URL Upload/Processing
- * 2. Querying the stored vector db for the youtube video
- */
 router.use("/create", createRouter);
-router.use("/search", searchRouter);
+router.use("/query", queryRouter);
 
 export default router;
