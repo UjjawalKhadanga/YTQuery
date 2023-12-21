@@ -1,30 +1,22 @@
 import { configDotenv } from "dotenv";
 configDotenv()
 
-import { OpenAI } from "langchain/llms/openai";
-import { PromptTemplate } from "langchain/prompts"
-import { LLMChain } from "langchain/chains";
-import { StructuredOutputParser } from "langchain/output_parsers";
+import { getYoutubeIdFromURL } from "./utils.js";
+import { createEmbeddingsAndStore, getSimilarDocsFromDB } from "./helpers/embeddings.js"
+import { getTranscripts, chunkDocs } from "./helpers/loader.js"
+import { queryFromDocs } from "./helpers/chains.js"
 
-const parser =  StructuredOutputParser.fromNamesAndDescriptions({
-    city: "{capital}",
-    population: "The population of {capital} is {population}."
-    // population: "The population of {country} is {population}."
-})
+// Flow 1 - Recieve the url, get transcript, chunk it and store in vector db
+const url = 'https://www.youtube.com/watch?v=Szox9wD4HRU'
+const videoId = getYoutubeIdFromURL(url)
 
-const prompt = new PromptTemplate({
-    template: "What is the capital of {country} and its population?\n\n{format_instructions}",
-    inputVariables: ["country"],
-    partialVariables: { format_instructions: parser.getFormatInstructions() }
-});
+const transcripts = await getTranscripts(url)
+const chunkedTranscripts = await chunkDocs(transcripts)
+createEmbeddingsAndStore(chunkedTranscripts, `./documents/${videoId}`)
 
 
-const model = new OpenAI({ temperature: 0, modelName: "text-davinci-003",  openAIApiKey: process.env.OPENAI_API_KEY});
-
-const chain1 = new LLMChain({ llm: model, prompt: prompt, outputParser: parser, outputKey: "answer"});
-
-const res = await chain1.call({
-    country: "Pakistan",
-})
-console.log(res);
-
+// Flow 2 - Given a query, find k most similar docs from db, pass docs + query to the LLM chain 
+const question = "What is the authors daily routine?"
+const similarDocs = await getSimilarDocsFromDB(`./documents/${videoId}`, question, 2)
+const res = await queryFromDocs(similarDocs, question)
+console.log(res)
