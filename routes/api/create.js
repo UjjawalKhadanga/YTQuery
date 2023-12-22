@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
       res.json({ success: true, videoId });
    } catch (error) {
       console.log(error);
-      res.status(500).json({ success: false });
+      return res.status(500).json({ success: false });
    }
 })
 
