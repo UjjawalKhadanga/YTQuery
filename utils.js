@@ -1,1 +1,5 @@
-export const getYoutubeIdFromURL = (url) => url.substring(url.length-11);
+export const getYoutubeIdFromURL = (url) => {
+    const urlParsed = new URL(url);
+    const videoId = urlParsed.searchParams.get("v");
+    return videoId;
+}

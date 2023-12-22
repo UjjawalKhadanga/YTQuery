@@ -1,22 +1,22 @@
 import { configDotenv } from "dotenv";
 configDotenv()
 
-import { getYoutubeIdFromURL } from "./utils.js";
-import { createEmbeddingsAndStore, getSimilarDocsFromDB } from "./helpers/embeddings.js"
-import { getTranscripts, chunkDocs } from "./helpers/loader.js"
-import { queryFromDocs } from "./helpers/chains.js"
+import mongoose from 'mongoose';
+import express from "express";
+const app = express();
 
-// Flow 1 - Recieve the url, get transcript, chunk it and store in vector db
-const url = 'https://www.youtube.com/watch?v=Szox9wD4HRU'
-const videoId = getYoutubeIdFromURL(url)
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+app.use(express.json());
 
-const transcripts = await getTranscripts(url)
-const chunkedTranscripts = await chunkDocs(transcripts)
-createEmbeddingsAndStore(chunkedTranscripts, `./documents/${videoId}`)
+await mongoose.connect(process.env.MONGO_URI);
 
+import apiRouter from "./routes/api/index.js";
+app.use("/api", apiRouter);
 
-// Flow 2 - Given a query, find k most similar docs from db, pass docs + query to the LLM chain 
-const question = "What is the authors daily routine?"
-const similarDocs = await getSimilarDocsFromDB(`./documents/${videoId}`, question, 2)
-const res = await queryFromDocs(similarDocs, question)
-console.log(res)
+app.listen(8080, () => {
+    console.log("Server is running on port 3000")
+})

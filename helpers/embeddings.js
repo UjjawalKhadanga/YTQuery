@@ -27,7 +27,7 @@ async function createEmbeddingsAndStore(docs, storagePath) {
 
 async function getSimilarDocsFromDB(dbPath, query, k=4) {
     const db = await FaissStore.load(dbPath, new OpenAIEmbeddings())
-    const docs = db.similaritySearch(query, k)
+    const docs = await db.similaritySearch(query, k)
     return docs;
 }
 
