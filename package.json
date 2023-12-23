@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rm -rf package-lock.json && rm -rf node_modules && npm i",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
@@ -19,5 +20,8 @@
     "openai": "^4.24.0",
     "youtube-transcript": "^1.0.6",
     "youtubei.js": "^5.8.0"
+  },
+  "engines": {
+    "node": "18.19.0"
   }
 }
