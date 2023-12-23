@@ -15,7 +15,7 @@ function Root() {
     console.log(url);
     setIsLoading(true);
     setVideoId(null);
-    axios.post("http://localhost:8080/api/create", { url })
+    axios.post(`${process.env.REACT_APP_API_SERVER}/api/create`, { url })
       .then((res) => {
         setVideoId(res.data.videoId);
         let status='success';

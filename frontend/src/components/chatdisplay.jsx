@@ -12,7 +12,7 @@ function ChatBox({videoId}) {
         setIsLoading(true);
         const interval = setInterval(async () => {
             console.log("checking status...");
-            const res = await axios.get(`http://localhost:8080/api/create/status?videoId=${videoId}`);
+            const res = await axios.get(`${process.env.REACT_APP_API_SERVER}/api/create/status?videoId=${videoId}`);
             console.log(res.data)
             if (res.data.status === "COMPLETED") {
                 clearInterval(interval);
@@ -24,7 +24,7 @@ function ChatBox({videoId}) {
 
     const handleClick = async () => {
         setIsLoading(true);
-        const res = await axios.post(`http://localhost:8080/api/query/${videoId}/?q=${question}`);
+        const res = await axios.post(`${process.env.REACT_APP_API_SERVER}/api/query/${videoId}/?q=${question}`);
         console.log(res.data);
         setAnswer(res.data.answer);
         setIsLoading(false);
