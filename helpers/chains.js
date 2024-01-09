@@ -5,7 +5,7 @@ import { StructuredOutputParser } from "langchain/output_parsers";
 
 export async function queryFromDocs(docs, query) {
     const model = new OpenAI({
-        modelName: "text-davinci-003",
+        modelName: "gpt-3.5-turbo-1106",
         temperature: 0.2,
         openAIApiKey: process.env.OPENAI_API_KEY
     });
